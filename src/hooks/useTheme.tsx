@@ -3,7 +3,9 @@
 // ====================================================================
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { supabase } from "@/server/supabase";
+// بدلاً من السطر القديم الذي يحتوي على @/server/supabase
+import { supabase } from "../server/supabase"; 
+
 
 type Theme = "light" | "dark";
 
@@ -89,4 +91,4 @@ export function useTheme() {
   const ctx = useContext(ThemeContext);
   if (!ctx) throw new Error("useTheme must be used inside <ThemeProvider>");
   return ctx;
-}
+          }

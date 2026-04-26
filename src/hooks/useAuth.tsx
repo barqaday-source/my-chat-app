@@ -1,6 +1,8 @@
-import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
+Import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/server/supabase"; // تأكد أن المسار يطابق مجلدك الحالي
+// بدلاً من السطر القديم الذي يحتوي على @/server/supabase
+import { supabase } from "../server/supabase"; 
+
 
 export type AppRole = "user" | "admin";
 export interface Profile {
@@ -154,4 +156,4 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");
   return ctx;
-}
+        }

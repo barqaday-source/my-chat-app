@@ -9,19 +9,21 @@
     --app-bg: #F46397;      
     --app-icon: #2C3C05;    
     --app-btn: #585752;     
-    --foreground: 222 47% 11%;
+    /* تعديل: جعلنا المتغير بصيغة HSL ليفهمه تيلويند */
+    --foreground: 222 47% 11%; 
     --radius: 2.5rem;
     --glass-border: rgba(255, 255, 255, 0.3);
-    /* أضفنا تعريف الحدود هنا ليقبلها التيلويند */
     --border: 214.3 31.8% 91.4%;
   }
 }
 
 @layer base {
-  * { border-color: hsl(var(--border) / 0.2); } /* استبدلنا border-border بهذا السطر */
+  * { border-color: hsl(var(--border) / 0.2); }
   html { direction: rtl; }
   body {
-    @apply text-foreground antialiased;
+    /* ✅ التعديل هنا: استبدلنا text-foreground بلون صريح أو كلاس معرف */
+    @apply antialiased; 
+    color: hsl(var(--foreground)); /* استخدمنا المتغير مباشرة هنا بدلاً من @apply */
     background-color: var(--app-bg) !important; 
     background-image: none !important;
     transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1); 

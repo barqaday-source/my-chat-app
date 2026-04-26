@@ -3,7 +3,13 @@
 // ====================================================================
 
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "@/hooks/useTheme"; // استخدام محرك الألوان الجديد
+// بدلاً من السطر الذي يحتوي على @/hooks/useTheme
+import { useTheme } from "../hooks/useTheme";
+
+// وإذا وجدت استيراداً للمكونات، غيره أيضاً:
+// مثال: من "@/components/ui/button" إلى "../components/ui/button"
+
+
 import { ChevronLeft, MessageCircle, Users, Sparkles, LogIn } from "lucide-react";
 
 export default function Welcome() {
@@ -101,4 +107,4 @@ export default function Welcome() {
       `}</style>
     </div>
   );
-}
+          }

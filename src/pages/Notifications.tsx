@@ -1,7 +1,9 @@
-import AppShell from "@/components/AppShell";
-import { useAuth } from "@/hooks/useAuth";
-import { useNotificationsCenter } from "@/hooks/useNotificationsCenter";
+import React from "react";
+import { AppShell } from "../components/AppShell"; // ✅ تم الإصلاح
+import { useAuth } from "../hooks/useAuth"; // ✅ إصلاح جديد
+import { useNotificationsCenter } from "../hooks/useNotificationsCenter"; // ✅ إصلاح جديد
 import { Bell, Check, Trash2 } from "lucide-react";
+
 
 export default function Notifications() {
   const { user } = useAuth();
@@ -57,4 +59,4 @@ export default function Notifications() {
       </div>
     </AppShell>
   );
-}
+              }

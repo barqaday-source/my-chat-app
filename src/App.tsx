@@ -1,21 +1,18 @@
-// ====================================================================
-// App.tsx - النسخة النهائية المصلحة والمربوطة بالمسارات المحلية
-// ====================================================================
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-// تم التعديل: العودة للمسارات المحلية بعد أن أنشأنا الملفات الناقصة
+// 1. مسارات الـ UI (تم إصلاحها سابقاً)
 import { Toaster as Sonner } from "./components/ui/sonner"; 
 import { Toaster } from "./components/ui/toaster";
-
 import { TooltipProvider } from "@radix-ui/react-tooltip";
-import { AuthProvider } from "@/hooks/useAuth";
-import { ThemeProvider } from "@/hooks/useTheme";
-import { AppSettingsProvider } from "@/hooks/useAppSettings";
-import ProtectedRoute from "@/components/ProtectedRoute";
 
-// استيراد صفحات المستخدم
+// 2. مسارات الـ Hooks (تغيير @ إلى . لإنهاء الخطأ الحالي)
+import { AuthProvider } from "./hooks/useAuth";
+import { ThemeProvider } from "./hooks/useTheme";
+import { AppSettingsProvider } from "./hooks/useAppSettings";
+
+// 3. مسارات المكونات والصفحات (تغيير شامل لضمان النجاح)
+import ProtectedRoute from "./components/ProtectedRoute";
 import Welcome from "./pages/Welcome.tsx";
 import AuthPage from "./pages/Auth.tsx";
 import ChatList from "./pages/ChatList.tsx";
@@ -49,8 +46,6 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
-            
-            {/* الآن سيعمل المكونان من داخل مجلد ui الخاص بك */}
             <Sonner position="top-center" expand={false} richColors />
             <Toaster />
           </AuthProvider>

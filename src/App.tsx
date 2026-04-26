@@ -1,10 +1,11 @@
 // ====================================================================
-// App.tsx - المحرك الرئيسي لتطبيق المستخدم (النسخة النظيفة)
+// App.tsx - المحرك الرئيسي لتطبيق المستخدم (النسخة المصلحة للنشر)
 // ====================================================================
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+// تم الإصلاح هنا: الاستيراد المباشر من المكتبة لضمان نجاح البناء في GitHub
+import { Toaster as Sonner } from "sonner"; 
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -12,7 +13,7 @@ import { ThemeProvider } from "@/hooks/useTheme";
 import { AppSettingsProvider } from "@/hooks/useAppSettings";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
-// استيراد صفحات المستخدم فقط
+// استيراد صفحات المستخدم
 import Welcome from "./pages/Welcome.tsx";
 import AuthPage from "./pages/Auth.tsx";
 import ChatList from "./pages/ChatList.tsx";
@@ -29,7 +30,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
-      {/* هذا هو المكون الوحيد الذي يربط التطبيق بأوامرك من لوحة التحكم عن بُعد */}
+      {/* ربط التطبيق بلوحة التحكم عن بُعد عبر الـ Settings */}
       <AppSettingsProvider>
         <TooltipProvider>
           <AuthProvider>
@@ -54,13 +55,12 @@ const App = () => (
                 {/* 5. قسم الإشعارات */}
                 <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
 
-                {/* ملاحظة: تم حذف جميع مسارات الـ Admin من هنا نهائياً للفصل والأمان */}
-
                 {/* مسار العودة في حال الخطأ */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
             
+            {/* نظام التنبيهات الاحترافي (Sonner) سيعمل الآن بدون أخطاء مسارات */}
             <Sonner position="top-center" expand={false} richColors />
             <Toaster />
           </AuthProvider>

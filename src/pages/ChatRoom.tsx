@@ -4,14 +4,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { supabase } from "../server/supabase";
-import { useAuth } from "../hooks/useAuth";
-import UserAvatar from "../components/UserAvatar";
+// ✅ استخدام المسارات النسبية بدلاً من @
+import { supabase } from "../server/supabase"; 
+import { useAuth } from "../hooks/useAuth"; 
+import UserAvatar from "../components/UserAvatar"; 
 import { 
   ArrowRight, Send, Loader2, Settings2, Users, Trash2, 
   MoreVertical, Ban, Flag, Palette, Edit3, DoorClosed
 } from "lucide-react";
 import { toast } from "sonner";
+
 
 export default function ChatRoom() {
   const { roomId } = useParams<{ roomId: string }>();

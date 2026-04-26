@@ -4,9 +4,9 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { useAppSettings } from "@/hooks/useAppSettings";
-import { supabase } from "@/server/supabase";
+import { useAuth } from "../hooks/useAuth";
+import { useAppSettings } from "../hooks/useAppSettings";
+import { supabase } from "../server/supabase";
 import { 
   Loader2, Mail, Lock, User, Eye, EyeOff, 
   Sparkles, ArrowRight, ChevronRight 

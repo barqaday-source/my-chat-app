@@ -6,25 +6,24 @@
 
 @layer base {
   :root {
-    /* هذه المتغيرات سيتم تحديث قيمها بواسطة JS من خلال ملف useAppSettings */
-    --app-bg: #F46397;      /* افتراضي: وردي الحداثة */
-    --app-icon: #2C3C05;    /* افتراضي */
-    --app-btn: #585752;     /* افتراضي */
-    
+    --app-bg: #F46397;      
+    --app-icon: #2C3C05;    
+    --app-btn: #585752;     
     --foreground: 222 47% 11%;
     --radius: 2.5rem;
-    --glass-border: 0 0% 100% / 0.3;
+    --glass-border: rgba(255, 255, 255, 0.3);
+    /* أضفنا تعريف الحدود هنا ليقبلها التيلويند */
+    --border: 214.3 31.8% 91.4%;
   }
 }
 
 @layer base {
-  * { @apply border-border; }
+  * { border-color: hsl(var(--border) / 0.2); } /* استبدلنا border-border بهذا السطر */
   html { direction: rtl; }
   body {
     @apply text-foreground antialiased;
-    /* الربط مع المتغيرات القادمة من لوحة التحكم */
     background-color: var(--app-bg) !important; 
-    background-image: none !important; /* نلغي التدرج القديم ليعتمد لونك المختار */
+    background-image: none !important;
     transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
     min-height: 100vh;
     font-family: 'Cairo', sans-serif;
@@ -40,7 +39,6 @@
     border-radius: var(--radius);
   }
 
-  /* زر الوحش المرتبط باللوحة */
   .btn-primary {
     background-color: var(--app-btn) !important;
     color: white;
@@ -49,7 +47,6 @@
     transition: all 0.3s ease;
   }
 
-  /* الأيقونات المرتبطة باللوحة */
   .icon-style {
     color: var(--app-icon) !important;
   }

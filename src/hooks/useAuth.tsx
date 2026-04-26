@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import type { Session, User } from "@supabase/supabase-js";
-// بدلاً من السطر القديم الذي يحتوي على @/server/supabase
+// ✅ التصحيح الجوهري للمسار: نخرج من hooks وندخل server
 import { supabase } from "../server/supabase"; 
-
 
 export type AppRole = "user" | "admin";
 export interface Profile {
@@ -10,7 +9,7 @@ export interface Profile {
   display_name: string | null;
   avatar_url: string | null;
   bio: string | null;
-  is_banned: boolean; // إضافة حقل الحظر للنوع
+  is_banned: boolean; 
 }
 
 interface AuthContextValue {
@@ -36,7 +35,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // دالة موحدة لجلب البيانات وفحص الحظر والصلاحيات
   const loadUserData = useCallback(async (userId: string) => {
     try {
       const [{ data: profileData, error: profileError }, { data: roleData }] = await Promise.all([
@@ -46,7 +44,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (profileError) throw profileError;
 
-      // الثغرة الأمنية: فحص إذا كان المستخدم محظوراً
       if (profileData?.is_banned) {
         await supabase.auth.signOut();
         alert("عذراً، هذا الحساب محظور من قبل الإدارة.");
@@ -66,7 +63,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // 1. مراقب حالة الجلسة
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
@@ -79,7 +75,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
-    // 2. فحص الجلسة عند التشغيل
     supabase.auth.getSession().then(({ data: { session: existing } }) => {
       setSession(existing);
       setUser(existing?.user ?? null);
@@ -102,7 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email: authEmail,
       password,
       options: {
-        emailRedirectTo: 'com.astabraq.app://login-callback', // رابط الـ APK
+        emailRedirectTo: 'com.astabraq.app://login-callback', 
         data: { 
           display_name: username.trim(),
           username: cleanUsername 
@@ -156,4 +151,4 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");
   return ctx;
-        }
+}

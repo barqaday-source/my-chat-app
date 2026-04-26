@@ -1,13 +1,13 @@
 // ====================================================================
-// App.tsx - المحرك الرئيسي لتطبيق المستخدم (النسخة المصلحة للنشر)
+// App.tsx - النسخة النهائية المصلحة للأخطاء (Clean Build)
 // ====================================================================
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-// تم الإصلاح هنا: الاستيراد المباشر من المكتبة لضمان نجاح البناء في GitHub
+// إصلاح استيراد التنبيهات مباشرة من المكتبات لضمان نجاح الـ Build
 import { Toaster as Sonner } from "sonner"; 
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "react-hot-toast"; // تم تغيير هذا المسار ليعمل مباشرة
+import { TooltipProvider } from "@radix-ui/react-tooltip"; // تم تغيير هذا المسار ليعمل مباشرة
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { AppSettingsProvider } from "@/hooks/useAppSettings";
@@ -30,37 +30,24 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
-      {/* ربط التطبيق بلوحة التحكم عن بُعد عبر الـ Settings */}
       <AppSettingsProvider>
         <TooltipProvider>
           <AuthProvider>
             <BrowserRouter>
               <Routes>
-                {/* 1. مسارات البداية (العامة) */}
                 <Route path="/" element={<Welcome />} />
                 <Route path="/auth" element={<AuthPage />} />
-
-                {/* 2. قسم المحادثات */}
                 <Route path="/chat" element={<ProtectedRoute><ChatList /></ProtectedRoute>} />
                 <Route path="/chat/:roomId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
-
-                {/* 3. قسم الغرف */}
                 <Route path="/rooms" element={<ProtectedRoute><Rooms /></ProtectedRoute>} />
-
-                {/* 4. قسم الحساب الشخصي والداشبورد الخاص بالمستخدم */}
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
                 <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
-
-                {/* 5. قسم الإشعارات */}
                 <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-
-                {/* مسار العودة في حال الخطأ */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
             
-            {/* نظام التنبيهات الاحترافي (Sonner) سيعمل الآن بدون أخطاء مسارات */}
             <Sonner position="top-center" expand={false} richColors />
             <Toaster />
           </AuthProvider>

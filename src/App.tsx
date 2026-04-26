@@ -1,13 +1,15 @@
 // ====================================================================
-// App.tsx - النسخة النهائية المصلحة للأخطاء (Clean Build)
+// App.tsx - النسخة النهائية المصلحة والمربوطة بالمسارات المحلية
 // ====================================================================
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-// إصلاح استيراد التنبيهات مباشرة من المكتبات لضمان نجاح الـ Build
-import { Toaster as Sonner } from "sonner"; 
-import { Toaster } from "react-hot-toast"; // تم تغيير هذا المسار ليعمل مباشرة
-import { TooltipProvider } from "@radix-ui/react-tooltip"; // تم تغيير هذا المسار ليعمل مباشرة
+
+// تم التعديل: العودة للمسارات المحلية بعد أن أنشأنا الملفات الناقصة
+import { Toaster as Sonner } from "@/components/ui/sonner"; 
+import { Toaster } from "@/components/ui/toaster"; 
+
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { AppSettingsProvider } from "@/hooks/useAppSettings";
@@ -48,6 +50,7 @@ const App = () => (
               </Routes>
             </BrowserRouter>
             
+            {/* الآن سيعمل المكونان من داخل مجلد ui الخاص بك */}
             <Sonner position="top-center" expand={false} richColors />
             <Toaster />
           </AuthProvider>
@@ -58,3 +61,4 @@ const App = () => (
 );
 
 export default App;
+              

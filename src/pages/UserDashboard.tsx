@@ -3,9 +3,9 @@
 // ====================================================================
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/server/supabase";
-import { useAuth } from "@/hooks/useAuth";
-import AppShell from "@/components/AppShell";
+import { supabase } from "../server/supabase";
+import { useAuth } from "../hooks/useAuth";
+import AppShell from "../components/AppShell";
 import { MessageSquare, LayoutGrid, Calendar, TrendingUp } from "lucide-react";
 
 interface Stats {

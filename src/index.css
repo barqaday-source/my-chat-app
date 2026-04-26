@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* هذه المتغيرات سيتم تحديث قيمها بواسطة JS من خلال ملف useAppSettings */
+    --app-bg: #F46397;      /* افتراضي: وردي الحداثة */
+    --app-icon: #2C3C05;    /* افتراضي */
+    --app-btn: #585752;     /* افتراضي */
+    
+    --foreground: 222 47% 11%;
+    --radius: 2.5rem;
+    --glass-border: 0 0% 100% / 0.3;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { direction: rtl; }
+  body {
+    @apply text-foreground antialiased;
+    /* الربط مع المتغيرات القادمة من لوحة التحكم */
+    background-color: var(--app-bg) !important; 
+    background-image: none !important; /* نلغي التدرج القديم ليعتمد لونك المختار */
+    transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+    min-height: 100vh;
+    font-family: 'Cairo', sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+  }
+
+  /* زر الوحش المرتبط باللوحة */
+  .btn-primary {
+    background-color: var(--app-btn) !important;
+    color: white;
+    font-weight: 600;
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+  }
+
+  /* الأيقونات المرتبطة باللوحة */
+  .icon-style {
+    color: var(--app-icon) !important;
+  }
+}
+
+.page-transition { 
+  animation: slide-up 0.4s ease-out; 
+}
+@keyframes slide-up { 
+  from { opacity: 0; transform: translateY(20px); } 
+  to { opacity: 1; transform: translateY(0); } 
+}

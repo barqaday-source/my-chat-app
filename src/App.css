@@ -1,0 +1,52 @@
+/* ==================================================================== */
+/* App.css - المحرك البصري المستجيب للوحة التحكم */
+/* ==================================================================== */
+
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* الربط مع المتغيرات القادمة منuseAppSettings */
+body {
+  /* سيتم سحب اللون من اللوحة فوراً */
+  background-color: var(--app-bg, #F46397) !important; 
+  transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* الأيقونات التي تريد تمييزها بلون اللوحة */
+.icon-style {
+  color: var(--app-icon, #2C3C05) !important;
+  transition: color 0.4s ease;
+}
+
+/* الأزرار الرئيسية التي ستتبع ثيم اللوحة */
+.btn-primary {
+  background-color: var(--app-btn, #585752) !important;
+  color: white;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* كلاس إضافي للنصوص التي تريدها أن تتبع لون الأيقونات (اختياري) */
+.text-theme {
+  color: var(--app-icon);
+}

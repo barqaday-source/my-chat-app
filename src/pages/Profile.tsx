@@ -1,22 +1,11 @@
-// ====================================================================
-// Profile - النسخة المربوطة كلياً بسوبابيس (The Real Beast)
-// ====================================================================
-
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/server/supabase"; 
-import AppShell from "@/components/AppShell";
-import UserAvatar from "@/components/UserAvatar";
-import { 
-  Camera, Loader2, Save, Settings, LogOut, ChevronLeft, 
-  Heart, Mail, Palette, Star
-} from "lucide-react";
-import { toast } from "sonner";
+// تصحيح المسارات للعمل على السيرفر (Relative Paths)
+import { useAuth } from "../hooks/useAuth"; 
+import { supabase } from "../server/supabase"; 
+import AppShell from "../components/AppShell";
+import UserAvatar from "../components/UserAvatar";
 
-export default function Profile() {
-  const navigate = useNavigate();
-  const { user, profile, refreshProfile, signOut } = useAuth();
   
   const [showSettings, setShowSettings] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -247,4 +236,4 @@ function MenuAction({ icon: Icon, label, onClick, color = "text-foreground" }) {
       <span className={`text-xs font-bold ${color}`}>{label}</span>
     </button>
   );
-}
+    }

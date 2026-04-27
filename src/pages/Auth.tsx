@@ -1,24 +1,24 @@
 // ====================================================================
-// Auth - بوابة الدخول (إصدار الوحش السماوي الزجاجي)
+// Auth - بوابة الدخول (إصدار الوحش السماوي الزجاجي - المصلح)
 // ====================================================================
 
-import { useState, useEffect, FormEvent } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useState, FormEvent } from "react";
+// ✅ أضفنا Navigate هنا لضمان عمل التحويل التلقائي
+import { useNavigate, useSearchParams, Navigate } from "react-router-dom"; 
 import { useAuth } from "../hooks/useAuth";
 import { useAppSettings } from "../hooks/useAppSettings";
-import { supabase } from "../server/supabase";
+// ✅ المسار النسبي الصحيح للخروج من مجلد pages والوصول لـ server
+import { supabase } from "../server/supabase"; 
 import { 
   Loader2, Mail, Lock, User, Eye, EyeOff, 
-  Sparkles, ArrowRight, ChevronRight 
+  Sparkles, ChevronRight 
 } from "lucide-react";
 import { toast } from "sonner";
 
 type Mode = "login" | "signup" | "forgot";
 
 export default function AuthPage() {
-  const navigate = useNavigate();
   const [params] = useSearchParams();
-  const { settings } = useAppSettings();
   const { user, loading, signIn, signUp } = useAuth();
 
   const [mode, setMode] = useState<Mode>(() => {
@@ -32,17 +32,19 @@ export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // إذا كان المستخدم مسجل دخول بالفعل
-  if (user && !loading) return <navigate to="/chat" replace />;
+  // ✅ استخدام حرف N كبير لضمان تعرف React Router عليه
+  if (user && !loading) return <Navigate to="/chat" replace />;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     try {
       if (mode === "login") {
-        await signIn(email, password);
+        const { error } = await signIn(email, password);
+        if (error) throw error;
       } else if (mode === "signup") {
-        await signUp(email, password, username);
+        const { error } = await signUp(email, password, username);
+        if (error) throw error;
         toast.success("تم إنشاء الحساب! افحص بريدك لتفعيله.");
       }
     } catch (error: any) {
@@ -59,7 +61,7 @@ export default function AuthPage() {
   return (
     <div className="relative min-h-screen overflow-hidden flex flex-col items-center justify-center px-6">
       
-      {/* الخلفية الانسيابية المتحركة (نفس روح الترحيب) */}
+      {/* الخلفية الانسيابية */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="blob blob-1" />
         <div className="blob blob-2" />
@@ -68,7 +70,7 @@ export default function AuthPage() {
 
       <div className="relative z-10 w-full max-w-[400px] anim-slide-up">
         
-        {/* الترويسة - هادئة جداً */}
+        {/* الترويسة */}
         <div className="text-center mb-10">
           <div className="inline-flex p-4 rounded-[2rem] glass-thick border border-white/50 mb-4 shadow-2xl">
             <Sparkles className="w-8 h-8 text-[#007AFF] animate-pulse" />
@@ -81,9 +83,8 @@ export default function AuthPage() {
           </p>
         </div>
 
-        {/* فورم الدخول */}
+        {/* الفورم */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          
           {mode === "signup" && (
             <div className="group relative">
               <User className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#007AFF] opacity-40 group-focus-within:opacity-100 transition" />
@@ -119,7 +120,6 @@ export default function AuthPage() {
             </button>
           </div>
 
-          {/* زر الأكشن الرئيسي */}
           <button 
             disabled={submitting}
             className="w-full h-15 mt-4 rounded-3xl btn-gradient text-white font-black text-sm shadow-xl shadow-[#007AFF]/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-50 group"
@@ -133,23 +133,20 @@ export default function AuthPage() {
           </button>
         </form>
 
-        {/* الفاصل */}
         <div className="flex items-center gap-4 my-8 opacity-20">
           <div className="h-[1px] flex-1 bg-[#007AFF]" />
           <span className="text-[10px] font-black uppercase">أو من خلال</span>
           <div className="h-[1px] flex-1 bg-[#007AFF]" />
         </div>
 
-        {/* جوجل */}
         <button 
           onClick={signInWithGoogle}
           className="w-full h-14 rounded-2xl glass border border-white/60 flex items-center justify-center gap-3 font-bold text-xs hover:bg-white/50 transition active:scale-[0.98] shadow-sm"
         >
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" />
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" alt="google" />
           متابعة باستخدام جوجل
         </button>
 
-        {/* التبديل بين الأوضاع */}
         <div className="text-center mt-10">
           <button 
             onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
@@ -173,4 +170,5 @@ export default function AuthPage() {
       `}</style>
     </div>
   );
-}
+                                   }
+      

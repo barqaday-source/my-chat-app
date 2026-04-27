@@ -4,10 +4,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../server/supabase";
-import { useAuth } from "../hooks/useAuth";
-import AppShell from "../components/AppShell";
-import UserAvatar from "../components/UserAvatar";
+import { supabase } from "@/server/supabase";
+import { useAuth } from "@/hooks/useAuth";
+import AppShell from "@/components/AppShell";
+import UserAvatar from "@/components/UserAvatar";
 import { 
   ArrowRight, Send, MoreVertical, Ban, ShieldAlert, 
   PushPin, Trash2, CheckCheck, Camera, Search,

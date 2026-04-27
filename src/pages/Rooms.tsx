@@ -4,9 +4,9 @@
 
 import { useEffect, useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase, type Room } from "../server/supabase"; // تأكد من المسار الجديد
-import { useAuth } from "../hooks/useAuth";
-import AppShell from "../components/AppShell";
+import { supabase, type Room } from "@/server/supabase"; // تأكد من المسار الجديد
+import { useAuth } from "@/hooks/useAuth";
+import AppShell from "@/components/AppShell";
 import { Plus, Loader2, X, Clock, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 

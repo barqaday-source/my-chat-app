@@ -3,8 +3,7 @@
 // ====================================================================
 
 import { useCallback, useEffect, useRef, useState } from "react";
-// ✅ التصحيح: توحيد المسار النسبي لضمان عبور السيرفر بنجاح
-import { supabase, type AppNotification } from "../server/supabase"; 
+import { supabase } from "/src/server/supabase";
 import { toast } from "sonner";
 
 export function useNotificationsCenter(userId: string | null) {

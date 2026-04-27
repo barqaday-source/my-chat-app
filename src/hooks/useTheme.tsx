@@ -1,10 +1,5 @@
-// ====================================================================
-// useTheme - النسخة المطورة: وضع ليلي + ألوان لوحة التحكم (Realtime)
-// ====================================================================
-
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { supabase } from "/src/server/supabase";
-
+import { supabase } from "@/server/supabase";
 
 type Theme = "light" | "dark";
 
@@ -105,4 +100,3 @@ export function useTheme() {
   if (!ctx) throw new Error("useTheme must be used inside <ThemeProvider>");
   return ctx;
           }
-      

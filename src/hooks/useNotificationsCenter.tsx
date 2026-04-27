@@ -3,7 +3,7 @@
 // ====================================================================
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { supabase, type AppNotification } from "@/server/supabase"; // المسار الجديد
+import { supabase, type AppNotification } from "../server/supabase"; // المسار الجديد
 import { toast } from "sonner";
 
 export function useNotificationsCenter(userId: string | null) {

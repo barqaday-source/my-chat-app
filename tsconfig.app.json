@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".", // ✅ أضف هذا السطر ليعرف التيبيسكريب من أين يبدأ الحساب
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
@@ -17,9 +18,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"] // ✅ التأكد من وجود هذا السطر لربط العلامة بمجلد src
     },
     "skipLibCheck": true,
     "strict": false,

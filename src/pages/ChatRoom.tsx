@@ -5,9 +5,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // ✅ استخدام المسارات النسبية بدلاً من @
-import { supabase } from "../server/supabase"; 
-import { useAuth } from "../hooks/useAuth"; 
-import UserAvatar from "../components/UserAvatar"; 
+import { supabase } from "@/server/supabase"; 
+import { useAuth } from "@/hooks/useAuth"; 
+import UserAvatar from "@/components/UserAvatar"; 
 import { 
   ArrowRight, Send, Loader2, Settings2, Users, Trash2, 
   MoreVertical, Ban, Flag, Palette, Edit3, DoorClosed

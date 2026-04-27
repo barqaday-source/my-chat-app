@@ -3,8 +3,8 @@
 // ====================================================================
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-// بدلاً من السطر القديم الذي يحتوي على @/server/supabase
-import { supabase } from "../server/supabase"; 
+// ✅ هذا المسار هو الذي سيفهمه السيرفر للخروج من مجلد hooks والوصول لـ server
+import { supabase } from "../server/supabase";
 
 
 type Theme = "light" | "dark";

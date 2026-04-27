@@ -3,8 +3,8 @@
 // ====================================================================
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-// ✅ التصحيح الجوهري: نخرج من مجلد hooks ونصل لمجلد server
-import { supabase } from "../server/supabase";
+import { supabase } from "/src/server/supabase";
+
 
 type Theme = "light" | "dark";
 

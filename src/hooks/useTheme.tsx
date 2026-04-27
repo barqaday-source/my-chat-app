@@ -3,9 +3,8 @@
 // ====================================================================
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-// ✅ هذا المسار هو الذي سيفهمه السيرفر للخروج من مجلد hooks والوصول لـ server
+// ✅ التصحيح الجوهري: نخرج من مجلد hooks ونصل لمجلد server
 import { supabase } from "../server/supabase";
-
 
 type Theme = "light" | "dark";
 
@@ -19,7 +18,7 @@ interface Ctx {
   theme: Theme;
   toggle: () => void;
   setTheme: (t: Theme) => void;
-  settings: AppSettings; // الألوان القادمة من سوبابيس
+  settings: AppSettings; 
 }
 
 const ThemeContext = createContext<Ctx | undefined>(undefined);
@@ -33,46 +32,60 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
   });
 
-  // 2. حالة ألوان "الوحش" القادمة من قاعدة البيانات
+  // 2. حالة ألوان "الوحش" الافتراضية
   const [settings, setSettings] = useState<AppSettings>({
-    app_bg_color: "#F46397", // قيم افتراضية
+    app_bg_color: "#F46397", 
     app_icon_color: "#2C3C05",
     app_button_color: "#585752"
   });
 
-  // 3. جلب الألوان من سوبابيس وتفعيل التحديث اللحظي (Realtime)
+  // 3. جلب الألوان وتفعيل التحديث اللحظي
   useEffect(() => {
     const fetchSettings = async () => {
-      const { data } = await supabase.from("app_settings").select("key, value");
-      if (data) {
-        const newSettings: any = {};
-        data.forEach(item => { newSettings[item.key] = item.value; });
-        setSettings(prev => ({ ...prev, ...newSettings }));
+      try {
+        const { data, error } = await supabase.from("app_settings").select("key, value");
+        if (error) throw error;
+        if (data) {
+          const newSettings: any = {};
+          data.forEach(item => { newSettings[item.key] = item.value; });
+          setSettings(prev => ({ ...prev, ...newSettings }));
+        }
+      } catch (err) {
+        console.error("Theme Settings Fetch Error:", err);
       }
     };
 
     fetchSettings();
 
-    // الاشتراك في التغييرات اللحظية: بمجرد تغيير اللون في اللوحة، يتغير هنا فوراً!
+    // ✅ الاشتراك اللحظي: أي تغيير في قاعدة البيانات ينعكس هنا فوراً
     const channel = supabase
       .channel("app_settings_changes")
-      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "app_settings" }, 
+      .on("postgres_changes", { 
+        event: "UPDATE", 
+        schema: "public", 
+        table: "app_settings" 
+      }, 
       (payload) => {
         setSettings(prev => ({ ...prev, [payload.new.key]: payload.new.value }));
       })
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
-  // 4. تطبيق الـ Dark Mode على الـ HTML
+  // 4. تطبيق التغييرات على HTML و CSS
   useEffect(() => {
     const root = document.documentElement;
+    
+    // إدارة الـ Dark Mode
     if (theme === "dark") root.classList.add("dark");
     else root.classList.remove("dark");
+    
     localStorage.setItem(STORAGE_KEY, theme);
     
-    // حقن ألوان سوبابيس في متغيرات CSS لكي تستخدمها في كل مكان
+    // ✅ حقن الألوان في متغيرات CSS لتعمل في كامل التطبيق
     root.style.setProperty("--app-bg", settings.app_bg_color);
     root.style.setProperty("--app-icon", settings.app_icon_color);
     root.style.setProperty("--app-btn", settings.app_button_color);
@@ -92,3 +105,4 @@ export function useTheme() {
   if (!ctx) throw new Error("useTheme must be used inside <ThemeProvider>");
   return ctx;
           }
+      

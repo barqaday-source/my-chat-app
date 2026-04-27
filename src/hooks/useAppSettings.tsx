@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from "/src/server/supabase";
-
-
+import { supabase } from "@/server/supabase";
 
 // تعريف شكل البيانات القادمة من سوبابيس (توحيد مع لوحة التحكم)
 interface AppSettings {

@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import type { Session, User } from "@supabase/supabase-js";
-// ✅ التصحيح الجوهري للمسار: نخرج من hooks وندخل server
-// ✅ هذا هو المسار الذي يربط مجلد hooks بمجلد server
-import { supabase } from "../server/supabase";
 
+// ✅ التعديل الأول: المسار النسبي الصحيح للوصول إلى ملف السوبابيس
+// نخرج من مجلد hooks باستخدام (..) ثم ندخل مجلد server
+import { supabase } from "../server/supabase"; 
 
 export type AppRole = "user" | "admin";
 export interface Profile {
@@ -39,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadUserData = useCallback(async (userId: string) => {
     try {
+      // ✅ نستخدم المسار المباشر لجدول البيانات
       const [{ data: profileData, error: profileError }, { data: roleData }] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).single(),
         supabase.from("user_roles").select("role").eq("user_id", userId).maybeSingle(),
@@ -65,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // ✅ مراقبة حالة الجلسة وتحديث البيانات
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
@@ -99,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email: authEmail,
       password,
       options: {
-        emailRedirectTo: 'com.astabraq.app://login-callback', 
+        emailRedirectTo: window.location.origin, // ✅ استخدام الرابط الحالي للموقع بدلاً من بروتوكول مخصص
         data: { 
           display_name: username.trim(),
           username: cleanUsername 
@@ -118,8 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'com.astabraq.app://login-callback',
-        skipBrowserRedirect: false
+        redirectTo: window.location.origin
       }
     });
     return { error };
@@ -131,8 +132,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRole(null);
   }, []);
 
-  const refreshProfile = useCallback(async () => {
-    if (user) await loadUserData(user.id);
+  const refreshProfile = useCallback(async (userId?: string) => {
+    const id = userId || user?.id;
+    if (id) await loadUserData(id);
   }, [user, loadUserData]);
 
   return (

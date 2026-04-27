@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 // ✅ التصحيح الجوهري للمسار: نخرج من hooks وندخل server
-import { supabase } from "/src/server/supabase";
+// ✅ هذا هو المسار الذي يربط مجلد hooks بمجلد server
+import { supabase } from "../server/supabase";
 
 
 export type AppRole = "user" | "admin";

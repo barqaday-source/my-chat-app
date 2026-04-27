@@ -3,7 +3,8 @@
 // ====================================================================
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { supabase, type AppNotification } from "../server/supabase"; // المسار الجديد
+// ✅ التصحيح: توحيد المسار النسبي لضمان عبور السيرفر بنجاح
+import { supabase, type AppNotification } from "../server/supabase"; 
 import { toast } from "sonner";
 
 export function useNotificationsCenter(userId: string | null) {
@@ -17,31 +18,47 @@ export function useNotificationsCenter(userId: string | null) {
       setLoading(false);
       return;
     }
-    const { data } = await supabase
-      .from("notifications")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(50);
-    setItems((data as AppNotification[]) ?? []);
-    setLoading(false);
+    try {
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      
+      if (error) throw error;
+      setItems((data as AppNotification[]) ?? []);
+    } catch (err) {
+      console.error("Fetch Notifications Error:", err);
+    } finally {
+      setLoading(false);
+    }
   }, [userId]);
 
   useEffect(() => {
     refresh();
     if (!userId) return;
 
+    // ✅ الاشتراك في الإشعارات اللحظية مع فلترة دقيقة للمستخدم الحالي
     const ch = supabase
       .channel(`${channelId.current}:${userId}`)
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
+        { 
+          event: "INSERT", 
+          schema: "public", 
+          table: "notifications", 
+          filter: `user_id=eq.${userId}` 
+        },
         (payload) => {
           const n = payload.new as AppNotification;
           setItems((prev) => [n, ...prev].slice(0, 50));
           
-          // تأكدنا أن الاسم n.body ليطابق SQL
-          toast(n.title, { description: n.body ?? undefined, duration: 4000 });
+          // تفعيل التنبيه المنبثق
+          toast.success(n.title, { 
+            description: n.body ?? undefined, 
+            duration: 4000 
+          });
         },
       )
       .subscribe();

@@ -8,7 +8,7 @@ import { useNavigate, useSearchParams, Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useAppSettings } from "../hooks/useAppSettings";
 // ✅ المسار النسبي الصحيح للخروج من مجلد pages والوصول لـ server
-import { supabase } from "../server/supabase"; 
+import { supabase } from "@/server/supabase";
 import { 
   Loader2, Mail, Lock, User, Eye, EyeOff, 
   Sparkles, ChevronRight 

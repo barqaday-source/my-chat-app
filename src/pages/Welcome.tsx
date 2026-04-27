@@ -4,10 +4,7 @@
 
 import { useNavigate } from "react-router-dom";
 // بدلاً من السطر الذي يحتوي على @/hooks/useTheme
-import { useTheme } from "../hooks/useTheme";
-
-// وإذا وجدت استيراداً للمكونات، غيره أيضاً:
-// مثال: من "@/components/ui/button" إلى "../components/ui/button"
+import { useTheme } from "@/hooks/useTheme";
 
 
 import { ChevronLeft, MessageCircle, Users, Sparkles, LogIn } from "lucide-react";

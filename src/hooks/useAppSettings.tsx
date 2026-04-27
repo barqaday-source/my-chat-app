@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-// بدل "@/server/supabase" استخدم:
-import { supabase } from "../server/supabase";
+import { supabase } from "/src/server/supabase";
+
 
 
 // تعريف شكل البيانات القادمة من سوبابيس (توحيد مع لوحة التحكم)

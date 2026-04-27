@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth"; 
 import { supabase } from "@/server/supabase";
-import AppShell from @./components/AppShell";
+import AppShell from "@/components/AppShell";
 import UserAvatar from "@/components/UserAvatar";
 import { 
   Camera, Loader2, Save, Settings, LogOut, ChevronLeft, 

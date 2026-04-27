@@ -1,10 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import type { Session, User } from "@supabase/supabase-js";
-
-// ✅ التعديل الأول: المسار النسبي الصحيح للوصول إلى ملف السوبابيس
-// نخرج من مجلد hooks باستخدام (..) ثم ندخل مجلد server
-import { supabase } from "../server/supabase"; 
-
+import { supabase } from "@/server/supabase";
 export type AppRole = "user" | "admin";
 export interface Profile {
   id: string;

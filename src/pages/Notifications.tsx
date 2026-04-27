@@ -1,6 +1,6 @@
-import React from "react";
-import { AppShell } from "../components/AppShell"; // ✅ تم الإصلاح
-import { useAuth } from "../hooks/useAuth"; // ✅ إصلاح جديد
+import React from "react"; 
+import AppShell from "@/components/AppShell";
+import { useAuth } from "@/hooks/useAuth"; // ✅ إصلاح جديد
 import { useNotificationsCenter } from "../hooks/useNotificationsCenter"; // ✅ إصلاح جديد
 import { Bell, Check, Trash2 } from "lucide-react";
 

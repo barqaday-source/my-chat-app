@@ -1,7 +1,3 @@
-// ====================================================================
-// ChatList - نسخة الوحش (مربوطة بالمدن والغرف الحقيقية)
-// ====================================================================
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/server/supabase";
@@ -10,49 +6,69 @@ import { useAuth } from "@/hooks/useAuth";
 import AppShell from "@/components/AppShell";
 import UserAvatar from "@/components/UserAvatar";
 import { 
-  Bell, Loader2, MessageCircle, Search, MapPin, 
+  Loader2, MessageCircle, Search, MapPin, 
   Lock, Plus, MoreHorizontal 
 } from "lucide-react";
 
-// قائمة المدن (مزامنة مع خيارات إنشاء الغرف)
+// ✅ 1. تعريف "شكل" الغرفة (Interface) بدلاً من any
+interface Room {
+  id: string;
+  name: string;
+  description: string;
+  city: string;
+  cover_url?: string;
+  is_closed: boolean;
+  created_at: string;
+}
+
+// ✅ 2. تعريف "شكل" المستخدم النشط
+interface ActiveUser {
+  id: string;
+  display_name: string;
+  avatar_url?: string;
+  last_seen: string;
+}
+
 const CITIES = ["الكل", "بغداد", "البصرة", "الموصل", "أربيل", "النجف"];
 
 export default function ChatList() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [rooms, setRooms] = useState<any[]>([]);
-  const [activeUsers, setActiveUsers] = useState<any[]>([]);
+  
+  // ✅ استخدام التعريفات الجديدة هنا
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [activeUsers, setActiveUsers] = useState<ActiveUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCity, setSelectedCity] = useState("الكل");
 
-  // 1. جلب الغرف والمستخدمين النشطين من سوبابيس
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      
-      // جلب الغرف المعتمدة فقط
-      const { data: roomsData } = await supabase
-        .from("rooms")
-        .select("*")
-        .order("created_at", { ascending: false });
+      try {
+        const { data: roomsData } = await supabase
+          .from("rooms")
+          .select("*")
+          .order("created_at", { ascending: false });
 
-      // جلب المستخدمين الذين تفاعلوا في آخر 10 دقائق
-      const tenMinsAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-      const { data: usersData } = await supabase
-        .from("profiles")
-        .select("id, display_name, avatar_url, last_seen")
-        .gt("last_seen", tenMinsAgo)
-        .limit(15);
+        const tenMinsAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+        const { data: usersData } = await supabase
+          .from("profiles")
+          .select("id, display_name, avatar_url, last_seen")
+          .gt("last_seen", tenMinsAgo)
+          .limit(15);
 
-      if (roomsData) setRooms(roomsData);
-      if (usersData) setActiveUsers(usersData);
-      setLoading(false);
+        if (roomsData) setRooms(roomsData as Room[]);
+        if (usersData) setActiveUsers(usersData as ActiveUser[]);
+      } catch (error) {
+        console.error("خطأ في جلب البيانات:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadData();
 
-    // الاشتراك في التغييرات اللحظية للغرف (إضافة/حذف غرف)
     const channel = supabase.channel('public:rooms')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, () => loadData())
       .subscribe();
@@ -60,7 +76,6 @@ export default function ChatList() {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  // 2. منطق الفلترة (بحث + مدينة)
   const filteredRooms = rooms.filter(r => {
     const matchesSearch = r.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCity = selectedCity === "الكل" || r.city === selectedCity;
@@ -70,20 +85,18 @@ export default function ChatList() {
   return (
     <AppShell>
       <div className="pb-28 page-transition bg-transparent">
-        {/* Header - يستخدم لون الأيقونات المختار من الأدمن */}
         <header className="px-6 pt-8 pb-4 flex items-center justify-between sticky top-0 z-50 glass-thick border-b border-white/20">
           <div>
             <h1 className="text-2xl font-black italic tracking-tighter leading-none text-primary" style={{ color: 'var(--app-icon)' }}>EXPLORE</h1>
             <p className="text-[10px] font-bold opacity-40 uppercase mt-1">عالمك بلمسة واحدة</p>
           </div>
           <div className="flex gap-2">
-             <button onClick={() => navigate('/create-room')} className="w-11 h-11 rounded-2xl btn-gradient flex items-center justify-center shadow-lg active:scale-90 transition" style={{ backgroundColor: 'var(--app-btn)' }}>
+             <button onClick={() => navigate('/create-room')} className="w-11 h-11 rounded-2xl btn-gradient flex items-center justify-center shadow-lg active:scale-90 transition">
                 <Plus className="w-6 h-6 text-white" />
              </button>
           </div>
         </header>
 
-        {/* شريط البحث */}
         <div className="px-6 mt-6">
           <div className="relative group">
             <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-30 group-focus-within:text-primary transition-all" />
@@ -97,11 +110,10 @@ export default function ChatList() {
           </div>
         </div>
 
-        {/* المتواجدون الآن */}
         <section className="mt-8">
           <div className="px-6 flex items-center justify-between mb-4">
             <h2 className="text-xs font-black opacity-30 uppercase tracking-widest">نشط الآن</h2>
-            <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
           </div>
           <div className="flex gap-5 overflow-x-auto px-6 no-scrollbar pb-2">
             {activeUsers.length > 0 ? activeUsers.map(u => (
@@ -117,7 +129,6 @@ export default function ChatList() {
           </div>
         </section>
 
-        {/* فلتر المدن */}
         <section className="mt-8 px-6">
           <div className="flex gap-2 overflow-x-auto no-scrollbar">
             {CITIES.map(city => (
@@ -137,7 +148,6 @@ export default function ChatList() {
           </div>
         </section>
 
-        {/* قائمة الغرف */}
         <section className="px-4 mt-8 space-y-4">
           {loading ? (
             <div className="flex flex-col items-center py-20 opacity-20">
@@ -153,13 +163,13 @@ export default function ChatList() {
               <div className="relative">
                 <div className="w-16 h-16 rounded-[1.5rem] flex items-center justify-center border border-white/50 bg-primary/5 shadow-inner overflow-hidden">
                   {room.cover_url ? (
-                    <img src={room.cover_url} className="w-full h-full object-cover" />
+                    <img src={room.cover_url} alt={room.name} className="w-full h-full object-cover" />
                   ) : (
                     <MessageCircle className="w-8 h-8 text-primary opacity-40" />
                   )}
                 </div>
                 {room.is_closed && (
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-destructive rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
                     <Lock className="w-3 h-3 text-white" />
                   </div>
                 )}
@@ -173,8 +183,8 @@ export default function ChatList() {
                 <p className="text-[11px] font-medium text-muted-foreground line-clamp-1 mt-1">{room.description}</p>
                 <div className="flex items-center gap-3 mt-3">
                   <div className="flex items-center gap-1 bg-white/40 px-2.5 py-1 rounded-xl border border-white/50">
-                    <MapPin className="w-3 h-3 text-primary" style={{ color: 'var(--app-icon)' }} />
-                    <span className="text-[10px] font-black text-primary/80" style={{ color: 'var(--app-icon)' }}>{room.city || "عام"}</span>
+                    <MapPin className="w-3 h-3 text-primary" />
+                    <span className="text-[10px] font-black text-primary/80">{room.city || "عام"}</span>
                   </div>
                 </div>
               </div>

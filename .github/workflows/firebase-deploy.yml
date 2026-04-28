@@ -10,7 +10,10 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install and Build
-        run: npm install && npm run build
+        run: |
+          npm install
+          if [ -z "$VITE_SUPABASE_URL" ]; then echo "❌ URL is Missing"; else echo "✅ URL is Set"; fi
+          npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}

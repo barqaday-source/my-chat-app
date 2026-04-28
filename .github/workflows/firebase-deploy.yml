@@ -4,6 +4,12 @@ on:
     branches:
       - main
 
+# ✅ إضافة الصلاحيات لضمان عمل الـ Action بدون أخطاء Permission
+permissions:
+  checks: write
+  contents: read
+  deployments: write
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -14,14 +20,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          # ✅ تحديث الإصدار إلى 20 لحل مشكلة Firebase CLI
           node-version: 20
           cache: 'npm'
 
       - name: Install and Build
         run: |
-          npm install
-          # تجاهل تحذيرات lint لضمان الاستمرارية
+          # ✅ استخدام npm ci بدلاً من install يضمن تثبيت نفس الإصدارات المسجلة في مشروعك
+          npm ci 
           npm run lint || echo "Linting failed but continuing build..."
           npm run build
         env:

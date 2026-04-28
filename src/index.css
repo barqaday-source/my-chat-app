@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --app-bg: #F46397;      
+    --app-bg: #F8F9FA;    
     --app-icon: #2C3C05;    
     --app-btn: #585752;     
     /* تعديل: جعلنا المتغير بصيغة HSL ليفهمه تيلويند */

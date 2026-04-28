@@ -67,10 +67,9 @@ export default function Profile() {
       if (updateError) throw updateError;
       await refreshProfile();
       toast.success("تم تحديث صورتك!");
-    } catch (error: any) {
-      toast.error("خطأ في الرفع");
-    } finally {
-      setUploading(false);
+      } catch (error) {
+  const err = error as Error; // هنا نخبر التطبيق أن هذا "خطأ" حقيقي له اسم ورسالة
+  toast.error(err.message || "حدث خطأ غير متوقع");
     }
   };
 

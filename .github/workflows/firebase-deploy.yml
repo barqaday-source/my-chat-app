@@ -14,20 +14,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          # ✅ تحديث الإصدار إلى 20 لحل مشكلة Firebase CLI
+          node-version: 20
           cache: 'npm'
 
       - name: Install and Build
         run: |
           npm install
-          # تشغيل الـ lint للتأكد من جودة الكود
+          # تجاهل تحذيرات lint لضمان الاستمرارية
           npm run lint || echo "Linting failed but continuing build..."
-          # بناء المشروع مع تجاهل تحذيرات TypeScript البسيطة لضمان النجاح
           npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          # ✅ نضع هذه لضمان أن عملية البناء لا تتوقف بسبب تحذيرات بسيطة
           CI: false 
 
       - name: Deploy to Firebase

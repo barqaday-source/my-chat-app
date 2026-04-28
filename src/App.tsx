@@ -1,18 +1,24 @@
+// ====================================================================
+// App.tsx - النسخة النهائية المعتمدة لتشغيل الواجهة
+// ====================================================================
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-// 1. مسارات الـ UI (تم إصلاحها سابقاً)
+// 1. استيراد المكونات الأساسية (تعديل المسارات لضمان عملها في البيئة الحالية)
 import { Toaster as Sonner } from "./components/ui/sonner"; 
 import { Toaster } from "./components/ui/toaster";
-import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { TooltipProvider } from "./components/ui/tooltip"; // تأكد من صحة هذا المسار في مجلدك
 
-// 2. مسارات الـ Hooks (تغيير @ إلى . لإنهاء الخطأ الحالي)
+// 2. استيراد الـ Hooks (المسارات التي تناسب بناء مشروعك الحالي)
 import { AuthProvider } from "./hooks/useAuth";
 import { ThemeProvider } from "./hooks/useTheme";
 import { AppSettingsProvider } from "./hooks/useAppSettings";
 
-// 3. مسارات المكونات والصفحات (تغيير شامل لضمان النجاح)
+// 3. حماية المسارات
 import ProtectedRoute from "./components/ProtectedRoute";
+
+// 4. استيراد الصفحات
 import Welcome from "./pages/Welcome.tsx";
 import AuthPage from "./pages/Auth.tsx";
 import ChatList from "./pages/ChatList.tsx";
@@ -34,8 +40,13 @@ const App = () => (
           <AuthProvider>
             <BrowserRouter>
               <Routes>
+                {/* الصفحة الافتراضية - ستعرض شاشة الترحيب بدلاً من الفراغ الوردي */}
                 <Route path="/" element={<Welcome />} />
+                
+                {/* صفحة تسجيل الدخول */}
                 <Route path="/auth" element={<AuthPage />} />
+
+                {/* المسارات المحمية (لا تظهر إلا بعد تسجيل الدخول) */}
                 <Route path="/chat" element={<ProtectedRoute><ChatList /></ProtectedRoute>} />
                 <Route path="/chat/:roomId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
                 <Route path="/rooms" element={<ProtectedRoute><Rooms /></ProtectedRoute>} />
@@ -43,6 +54,8 @@ const App = () => (
                 <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
                 <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
                 <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+
+                {/* صفحة الخطأ في حال كتابة مسار غير موجود */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

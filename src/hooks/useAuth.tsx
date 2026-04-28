@@ -1,13 +1,23 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
-import type { Session, User } from "@supabase/supabase-js";
+import type { Session, User, AuthError } from "@supabase/supabase-js";
 import { supabase } from "@/server/supabase";
+
 export type AppRole = "user" | "admin";
+
 export interface Profile {
   id: string;
   display_name: string | null;
   avatar_url: string | null;
   bio: string | null;
   is_banned: boolean; 
+  hobby?: string;   // ✅ أضفتها لتتوافق مع صفحة البروفايل
+  gender?: string;  // ✅ أضفتها لتتوافق مع صفحة البروفايل
+  zodiac?: string;  // ✅ أضفتها لتتوافق مع صفحة البروفايل
+}
+
+// ✅ تعريف واجهة لردود الفعل من الدوال لضمان عدم استخدام any
+interface AuthResponse {
+  error: AuthError | Error | null;
 }
 
 interface AuthContextValue {
@@ -17,9 +27,9 @@ interface AuthContextValue {
   role: AppRole | null;
   isAdmin: boolean;
   loading: boolean;
-  signUp: (email: string, password: string, username: string, useLocalEmail?: boolean) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signInWithGoogle: () => Promise<{ error: any }>;
+  signUp: (email: string, password: string, username: string, useLocalEmail?: boolean) => Promise<AuthResponse>;
+  signIn: (email: string, password: string) => Promise<AuthResponse>;
+  signInWithGoogle: () => Promise<AuthResponse>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -35,7 +45,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadUserData = useCallback(async (userId: string) => {
     try {
-      // ✅ نستخدم المسار المباشر لجدول البيانات
       const [{ data: profileData, error: profileError }, { data: roleData }] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).single(),
         supabase.from("user_roles").select("role").eq("user_id", userId).maybeSingle(),
@@ -52,8 +61,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      setProfile(profileData as Profile | null);
-      setRole(roleData?.role as AppRole | null);
+      setProfile(profileData as Profile);
+      setRole((roleData?.role as AppRole) || "user");
     } catch (error) {
       console.error("Error loading user data:", error);
     } finally {
@@ -62,7 +71,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // ✅ مراقبة حالة الجلسة وتحديث البيانات
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
@@ -97,19 +105,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email: authEmail,
       password,
       options: {
-        emailRedirectTo: window.location.origin, // ✅ استخدام الرابط الحالي للموقع بدلاً من بروتوكول مخصص
+        emailRedirectTo: window.location.origin,
         data: { 
           display_name: username.trim(),
           username: cleanUsername 
         },
       },
     });
-    return { error };
+    return { error: error as AuthError | null };
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error };
+    return { error: error as AuthError | null };
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
@@ -119,7 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         redirectTo: window.location.origin
       }
     });
-    return { error };
+    return { error: error as AuthError | null };
   }, []);
 
   const signOut = useCallback(async () => {
@@ -151,4 +159,5 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");
   return ctx;
-}
+  }
+                                    

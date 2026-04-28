@@ -1,14 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from "@/server/supabase";
 
-// تعريف شكل البيانات القادمة من سوبابيس (توحيد مع لوحة التحكم)
+// ✅ تعريف دقيق لشكل الإعدادات
 interface AppSettings {
   app_name: string;
   developer_name: string;
   app_version: string;
   support_whatsapp?: string;
   is_maintenance_mode: boolean;
-  // حقول الألوان للحقن الفوري
   app_bg_color?: string;
   app_button_color?: string;
 }
@@ -22,7 +21,7 @@ interface AppSettingsContextType {
 const AppSettingsContext = createContext<AppSettingsContextType | undefined>(undefined);
 
 export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // قيم افتراضية قوية لمنع انهيار الواجهة
+  // قيم افتراضية متينة لضمان عدم انهيار الواجهة
   const [settings, setSettings] = useState<AppSettings>({
     app_name: 'دردشة بارق',
     developer_name: 'بارق عداي',
@@ -34,7 +33,6 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
   
   const [loading, setLoading] = useState(true);
 
-  // دالة جلب البيانات من سوبابيس
   const fetchSettings = async () => {
     try {
       const { data, error } = await supabase
@@ -56,16 +54,17 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
         });
       }
     } catch (error) {
-      console.error('Error fetching app settings:', error);
+      // ✅ استبدال any بنوع الخطأ الحقيقي
+      const err = error as Error;
+      console.error('Error fetching app settings:', err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // تأثير حقن الألوان في الـ CSS
   useEffect(() => {
     if (settings) {
-      // حقن الألوان في متغيرات CSS العالمية (Variables)
+      // حقن الألوان في متغيرات CSS العالمية
       document.documentElement.style.setProperty('--primary', settings.app_button_color || '#585752');
       document.documentElement.style.setProperty('--background', settings.app_bg_color || '#F46397');
     }
@@ -74,8 +73,7 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
   useEffect(() => {
     fetchSettings();
 
-    // تفعيل التحديث اللحظي (Realtime)
-    // بمجرد ضغط "حقن" من لوحة التحكم، سيتغير اللون عند المستخدمين فوراً
+    // التحديث اللحظي (Realtime)
     const subscription = supabase
       .channel('app_settings_changes')
       .on('postgres_changes', { 
@@ -88,7 +86,7 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
       .subscribe();
 
     return () => {
-      subscription.unsubscribe();
+      supabase.removeChannel(subscription);
     };
   }, []);
 
@@ -106,3 +104,4 @@ export const useAppSettings = () => {
   }
   return context;
 };
+      

@@ -4,10 +4,10 @@
     <link rel="manifest" href="/manifest.json" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    
+    <meta name="theme-color" content="#F46397" id="meta-theme-color" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
     <title>دردشاتي - عالمك للتواصل</title>
     <meta name="description" content="دردشاتي - تطبيق دردشة عربي حديث." />
@@ -16,16 +16,78 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+      /* ✅ حقن متغيرات الألوان الافتراضية لمنع الوميض الأبيض */
+      :root {
+        --primary: #585752;
+        --background: #F46397;
+        --app-btn: #585752;
+        --app-icon: #585752;
+      }
+
+      /* تنسيق أولي سريع للخلفية */
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--background);
+        font-family: 'Cairo', 'Tajawal', sans-serif;
+        overflow-x: hidden;
+      }
+
+      /* شاشة تحميل بسيطة تظهر قبل تشغيل React */
+      #initial-loader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--background);
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
   <body>
+    <div id="initial-loader">
+      <div class="spinner"></div>
+    </div>
+
     <div id="root"></div>
+    
     <script type="module" src="/src/main.tsx"></script>
- <script>
-  window.onerror = function(msg, url, linenumber) {
-    alert('خطأ في التطبيق: ' + msg + '\nالمسار: ' + url + '\nالسطر: ' + linenumber);
-    return true;
-  };
- </script> 
+
+    <script>
+      // ✅ تنظيف الـ alert المزعج في الإنتاج واستبداله بـ console
+      window.onerror = function(msg, url, linenumber) {
+        console.error('App Error:', msg, '\nPath:', url, '\nLine:', linenumber);
+        // في مرحلة التطوير فقط يمكنك تفعيل الـ alert إذا أردت
+        return true;
+      };
+
+      // إخفاء الـ loader بعد تحميل الملفات الأساسية
+      window.addEventListener('load', function() {
+        const loader = document.getElementById('initial-loader');
+        if (loader) {
+          loader.style.opacity = '0';
+          setTimeout(() => loader.remove(), 500);
+        }
+      });
+    </script> 
   </body>
 </html>
+

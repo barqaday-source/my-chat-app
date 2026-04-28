@@ -1,13 +1,7 @@
-// ====================================================================
-// Auth - بوابة الدخول (إصدار الوحش السماوي الزجاجي - المصلح)
-// ====================================================================
-
 import { useState, FormEvent } from "react";
-// ✅ أضفنا Navigate هنا لضمان عمل التحويل التلقائي
 import { useNavigate, useSearchParams, Navigate } from "react-router-dom"; 
 import { useAuth } from "../hooks/useAuth";
 import { useAppSettings } from "../hooks/useAppSettings";
-// ✅ المسار النسبي الصحيح للخروج من مجلد pages والوصول لـ server
 import { supabase } from "@/server/supabase";
 import { 
   Loader2, Mail, Lock, User, Eye, EyeOff, 
@@ -32,7 +26,7 @@ export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // ✅ استخدام حرف N كبير لضمان تعرف React Router عليه
+  // ✅ استخدام Navigate بشكل سليم
   if (user && !loading) return <Navigate to="/chat" replace />;
 
   const handleSubmit = async (e: FormEvent) => {
@@ -47,15 +41,23 @@ export default function AuthPage() {
         if (error) throw error;
         toast.success("تم إنشاء الحساب! افحص بريدك لتفعيله.");
       }
-    } catch (error: any) {
-      toast.error(error.message || "حدث خطأ ما");
+    } catch (error) {
+      // ✅ تم تنظيف any واستخدام النوع الحقيقي للخطأ
+      const err = error as Error;
+      toast.error(err.message || "حدث خطأ ما أثناء العملية");
     } finally {
       setSubmitting(false);
     }
   };
 
   const signInWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({ provider: 'google' });
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+      if (error) throw error;
+    } catch (error) {
+      const err = error as Error;
+      toast.error(err.message);
+    }
   };
 
   return (
@@ -122,7 +124,7 @@ export default function AuthPage() {
 
           <button 
             disabled={submitting}
-            className="w-full h-15 mt-4 rounded-3xl btn-gradient text-white font-black text-sm shadow-xl shadow-[#007AFF]/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-50 group"
+            className="w-full h-[3.75rem] mt-4 rounded-3xl btn-gradient text-white font-black text-sm shadow-xl shadow-[#007AFF]/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-50 group"
           >
             {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (
               <>
@@ -166,9 +168,7 @@ export default function AuthPage() {
           0%, 100% { transform: translate(0,0) scale(1); } 
           50% { transform: translate(20px, -40px) scale(1.1); } 
         }
-        .h-15 { height: 3.75rem; }
       `}</style>
     </div>
   );
-                                   }
-      
+}

@@ -1,34 +1,27 @@
-// ====================================================================
-// App.tsx - النسخة النهائية المعتمدة لتشغيل الواجهة
-// ====================================================================
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-// 1. استيراد المكونات الأساسية (تعديل المسارات لضمان عملها في البيئة الحالية)
+// 1. استيراد المكونات الأساسية
 import { Toaster as Sonner } from "./components/ui/sonner"; 
 import { Toaster } from "./components/ui/toaster";
-import { TooltipProvider } from "./components/ui/tooltip"; // تأكد من صحة هذا المسار في مجلدك
+import { TooltipProvider } from "./components/ui/tooltip";
 
-// 2. استيراد الـ Hooks (المسارات التي تناسب بناء مشروعك الحالي)
+// 2. استيراد الـ Hooks
 import { AuthProvider } from "./hooks/useAuth";
 import { ThemeProvider } from "./hooks/useTheme";
 import { AppSettingsProvider } from "./hooks/useAppSettings";
 
-// 3. حماية المسارات
-import ProtectedRoute from "./components/ProtectedRoute";
-
-// 4. استيراد الصفحات
-import Welcome from "./pages/Welcome.tsx";
-import AuthPage from "./pages/Auth.tsx";
-import ChatList from "./pages/ChatList.tsx";
-import ChatRoom from "./pages/ChatRoom.tsx";
-import Rooms from "./pages/Rooms.tsx";
-import Profile from "./pages/Profile.tsx";
-import Notifications from "./pages/Notifications.tsx";
-import Friends from "./pages/Friends.tsx";
-import UserDashboard from "./pages/UserDashboard.tsx";
-import NotFound from "./pages/NotFound.tsx";
+// 3. استيراد الصفحات (بدون .tsx لضمان استقرار البناء)
+import Welcome from "./pages/Welcome";
+import AuthPage from "./pages/Auth";
+import ChatList from "./pages/ChatList";
+import ChatRoom from "./pages/ChatRoom";
+import Rooms from "./pages/Rooms";
+import Profile from "./pages/Profile";
+import Notifications from "./pages/Notifications";
+import Friends from "./pages/Friends";
+import UserDashboard from "./pages/UserDashboard";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -40,22 +33,18 @@ const App = () => (
           <AuthProvider>
             <BrowserRouter>
               <Routes>
-                {/* الصفحة الافتراضية - ستعرض شاشة الترحيب بدلاً من الفراغ الوردي */}
+                {/* 🔓 المسارات الآن مفتوحة تماماً للفحص بدون ProtectedRoute */}
                 <Route path="/" element={<Welcome />} />
-                
-                {/* صفحة تسجيل الدخول */}
                 <Route path="/auth" element={<AuthPage />} />
+                <Route path="/chat" element={<ChatList />} />
+                <Route path="/chat/:roomId" element={<ChatRoom />} />
+                <Route path="/rooms" element={<Rooms />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/dashboard" element={<UserDashboard />} />
+                <Route path="/friends" element={<Friends />} />
+                <Route path="/notifications" element={<Notifications />} />
 
-                {/* المسارات المحمية (لا تظهر إلا بعد تسجيل الدخول) */}
-                <Route path="/chat" element={<ProtectedRoute><ChatList /></ProtectedRoute>} />
-                <Route path="/chat/:roomId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
-                <Route path="/rooms" element={<ProtectedRoute><Rooms /></ProtectedRoute>} />
-                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
-                <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
-                <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-
-                {/* صفحة الخطأ في حال كتابة مسار غير موجود */}
+                {/* صفحة الخطأ */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
